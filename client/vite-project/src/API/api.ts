@@ -7,3 +7,4 @@ export const EXERCISE_API_DETAILS = {
 };
 
 export const YOUTUBE_API_DETAILS = {};
+

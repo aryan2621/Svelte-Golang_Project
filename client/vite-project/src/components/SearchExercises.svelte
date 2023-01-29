@@ -1,0 +1,137 @@
+<script lang="ts">
+  import { EXERCISE_API_DETAILS } from "../API/api";
+  import axios from "axios";
+  import { onMount } from "svelte";
+
+  let exercise: string = "";
+  export let exerciseData: any = [];
+  let exersiseForAllBodyParts: any = [];
+
+  const handleSubmit = async () => {
+    if (exercise.length > 0) {
+      let options = {
+        url: EXERCISE_API_DETAILS.BASE_URL + exercise,
+        headers: {
+          "X-Api-Key": EXERCISE_API_DETAILS.HEADERS.KEY,
+        },
+      };
+      console.log(options);
+      axios
+        .request(options)
+        .then(function (response) {
+          console.log(response.data);
+          exerciseData = response.data;
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    }
+
+  };
+
+  onMount(async () => {
+    let options = {
+      url: EXERCISE_API_DETAILS.BASE_URL,
+      headers: {
+        "X-Api-Key": EXERCISE_API_DETAILS.HEADERS.KEY,
+      },
+    };
+    axios
+      .request(options)
+      .then(function (response) {
+        console.log(response.data);
+        exersiseForAllBodyParts = response.data.splice(0, 6);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  });
+  const truncate = (str: string, isTruncated: boolean) => {
+    if (isTruncated) {
+      return str.substring(0, 100);
+    } else {
+      return str;
+    }
+  };
+</script>
+
+<main>
+  <div class="flex justify-center text-center">
+    <div class="mb-3 w-4/5">
+      <form on:submit|preventDefault={handleSubmit}>
+        <label
+          for=""
+          class=" mt-5 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl m-auto"
+          >Awesome Exercises You Should Know.</label
+        >
+        <input
+          type="text"
+          class="
+                    form-control
+                    px-3
+                    py-1.5
+                    text-base
+                    font-normal
+                    text-gray-700
+                    bg-white bg-clip-padding
+                    border border-solid border-gray-300
+                    rounded
+                    transition
+                    ease-in-out
+                    mt-5
+                    w-4/5
+                    focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none
+                  "
+          placeholder="Search for exercises"
+          bind:value={exercise}
+        />
+        <button
+          type="submit"
+          class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-4 border border-blue-500 hover:border-transparent rounded"
+        >
+          Button
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="container my-24 px-6 mx-auto">
+    <section class="mb-32 text-gray-800 text-center">
+      <h2 class="text-3xl font-bold mb-12">Testimonials</h2>
+      <div class="grid md:grid-cols-3 gap-x-6 lg:gap-x-12">
+        {#each exersiseForAllBodyParts as exercise}
+          <div class="mb-12 md:mb-0">
+            <div class="flex justify-center mb-6">
+              <img
+                src={"https://api.unsplash.com/search/photos"}
+                class="rounded-full shadow-lg w-32"
+                alt=""
+              />
+            </div>
+            <h5 class="text-lg font-bold mb-4">{exercise.name}</h5>
+            <h6 class="font-medium text-blue-600 mb-4">
+              {exercise.difficulty}
+            </h6>
+            <p class="mb-4">
+              <svg
+                aria-hidden="true"
+                focusable="false"
+                data-prefix="fas"
+                data-icon="quote-left"
+                class="w-6 pr-2 inline-block"
+                role="img"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+              >
+                <path
+                  fill="currentColor"
+                  d="M464 256h-80v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8c-88.4 0-160 71.6-160 160v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48zm-288 0H96v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8C71.6 32 0 103.6 0 192v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48z"
+                />
+              </svg>
+              {truncate(exercise.instructions, true)}...
+            </p>
+          </div>
+        {/each}
+      </div>
+    </section>
+  </div>
+</main>
